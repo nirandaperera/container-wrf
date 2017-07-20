@@ -1,15 +1,15 @@
-FROM centos:latest
-MAINTAINER John Exby <exby@ucar.edu>
+FROM ubuntu:16.04
+MAINTAINER Niranda Perera <niranda.17@cse.mrt.ac.lk>
 # 
 # This Dockerfile compiles WRF from source during "docker build" step
-ENV WRF_VERSION 3.7.1
-RUN curl -SL https://ral.ucar.edu/sites/default/files/public/projects/ncar-docker-wrf/ucar-bsd-3-clause-license.pdf > /UCAR-BSD-3-Clause-License.pdf
-#
-RUN yum -y update
-RUN yum -y install file gcc gcc-gfortran gcc-c++ glibc.i686 libgcc.i686 libpng-devel jasper jasper-devel hostname m4 make perl tar tcsh time wget which zlib zlib-devel openssh-clients openssh-server net-tools epel-release
+ENV WRF_VERSION 3.8.1
+#RUN curl -SL https://ral.ucar.edu/sites/default/files/public/projects/ncar-docker-wrf/ucar-bsd-3-clause-license.pdf > /UCAR-BSD-3-Clause-License.pdf
+
+RUN apt-get -y update
+RUN apt-get -y install file gcc gcc-gfortran gcc-c++ glibc.i686 libgcc.i686 libpng-devel jasper jasper-devel hostname m4 make perl tar tcsh time wget which zlib zlib-devel openssh-clients openssh-server net-tools epel-release
 #
 # now get 3rd party EPEL builds of netcdf and openmpi dependencies
-RUN yum -y install netcdf-openmpi-devel.x86_64 netcdf-fortran-openmpi-devel.x86_64 netcdf-fortran-openmpi.x86_64 hdf5-openmpi.x86_64 openmpi.x86_64 openmpi-devel.x86_64
+RUN apt-get -y install netcdf-openmpi-devel.x86_64 netcdf-fortran-openmpi-devel.x86_64 netcdf-fortran-openmpi.x86_64 hdf5-openmpi.x86_64 openmpi.x86_64 openmpi-devel.x86_64
 #
 WORKDIR /wrf
 #
@@ -71,7 +71,7 @@ RUN chmod +x /wrf/run-wrf \
 COPY ssh_config /root/.ssh/config
 RUN mkdir -p /root/.openmpi
 COPY default-mca-params.conf /root/.openmpi/mca-params.conf
-RUN yum clean all \
+RUN apt-get clean all \
     && /wrf/docker-clean \
     && mkdir -p /var/run/sshd \
     && ssh-keygen -A \
@@ -84,4 +84,4 @@ RUN yum clean all \
     && cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
 #
 VOLUME /wrf
-CMD ["/wrf/run-wrf"]
+#CMD ["/wrf/run-wrf"]
